@@ -31,6 +31,9 @@
       crossorigin="anonymous"
     ></script>
 
+    <!-- sweatalert2 -->
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
       .timer {
         font-size: 150%;
@@ -62,6 +65,22 @@
           opacity: 1;
         }
       }
+
+      .show_move_left {
+        animation: move_left 0.8s;
+      }
+
+      @keyframes move_left {
+        from {
+          transform: translateX(50px);
+          opacity: 0;
+        }
+
+        to {
+          transform: translateX(0px);
+          opacity: 1;
+        }
+      }
     </style>
   </head>
   <body>
@@ -72,50 +91,69 @@
       let wordsLen = words.length;
 
       const App = () => {
-        const [isPlaying, setPlaying] = useState("false");
-        const [giveUp, setGiveUp] = useState("false");
+        const [min, setMin] = useState(3);
+        const [isPlaying, setPlaying] = useState(false);
+        const [isGiveUp, setGiveUp] = useState(false);
         const [word, setWord] = useState("╰(*°▽°*)╯");
+        const timer = () => setInterval(() => setMin((pre) => pre - 1), 1000);
+
+        useEffect(() => {
+          if (min === 0) {
+            clearInterval(timer);
+            Swal.fire("時間到!");
+            setPlaying(false);
+            // setMin(3);
+            setWord("╰(*°▽°*)╯");
+          }
+        }, [min]);
+
         const randomWord = () => {
           const randomNum = Math.floor(wordsLen * Math.random());
-          console.log(words);
           setWord(words[randomNum]);
           wordsLen--;
           words.splice(randomNum, 1);
         };
+
         return (
           <div class="container d-flex flex-column">
-            <div className="border timer">TIMER</div>
+            <div className="border timer">{min}</div>
             <div className="border word text-center">{word}</div>
 
             {isPlaying ? (
-              <MyBtn
-                text="開始"
-                btnClass="start"
-                doClick={() => {
-                  randomWord();
-                  setPlaying((pre) => !pre);
-                }}
-              />
-            ) : (
               <div className="d-flex justify-content-around show_move_up">
                 <MyBtn
                   text="棄牌"
                   btnClass="give-up btn-danger"
                   doClick={() => {
                     randomWord();
-                    setGiveUp((pre) => !pre);
+                    setGiveUp(true);
                   }}
+                  isDisabled={isGiveUp}
                 />
                 <MyBtn text="下張" btnClass="next" doClick={randomWord} />
               </div>
+            ) : (
+              <MyBtn
+                text="開始"
+                btnClass="start"
+                doClick={() => {
+                  randomWord();
+                  setPlaying(true);
+                  timer();
+                }}
+              />
             )}
           </div>
         );
       };
 
-      const MyBtn = ({ text, doClick, btnClass = "" }) => {
+      const MyBtn = ({ text, doClick, btnClass = "", isDisabled = false }) => {
         return (
-          <button className={"btn btn-primary " + btnClass} onClick={doClick}>
+          <button
+            disabled={isDisabled}
+            className={"btn btn-primary " + btnClass}
+            onClick={doClick}
+          >
             {text}
           </button>
         );
