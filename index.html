@@ -37,17 +37,19 @@
     <style>
       .timer {
         font-size: 150%;
+        height: 50px;
       }
 
       .word {
         font-size: 450%;
-        line-height: 2.5;
+        line-height: 4.5;
       }
 
       .start,
       .give-up,
       .next {
         font-size: 450%;
+        line-height: 2.5;
       }
 
       .show_move_up {
@@ -81,6 +83,10 @@
           opacity: 1;
         }
       }
+
+      .container {
+        height: 98vh;
+      }
     </style>
   </head>
   <body>
@@ -96,14 +102,16 @@
         const [isGiveUp, setGiveUp] = useState(false);
         const [word, setWord] = useState("╰(*°▽°*)╯");
         const timer = () => setInterval(() => setMin((pre) => pre - 1), 1000);
+        const stopTimer = () => clearInterval(timer);
 
         useEffect(() => {
-          if (min === 0) {
-            clearInterval(timer);
-            Swal.fire("時間到!");
+          if (min <= 0 && isPlaying) {
+            clearInterval(timer); //目前沒作用
+            Swal.fire("時間到啦", "", "warning");
             setPlaying(false);
-            // setMin(3);
+            setGiveUp(false);
             setWord("╰(*°▽°*)╯");
+            // setMin(3);
           }
         }, [min]);
 
@@ -115,10 +123,18 @@
         };
 
         return (
-          <div class="container d-flex flex-column">
-            <div className="border timer">{min}</div>
-            <div className="border word text-center">{word}</div>
-
+          <div class="container show_move_up d-flex flex-column justify-content-between">
+            <div className="timer mt-3">
+              {isPlaying ? (
+                <div className="border ">{min}</div>
+              ) : (
+                <MyInputGroup
+                  value={min}
+                  doChange={(e) => setMin(e.target.value)}
+                />
+              )}
+            </div>
+            <div className="border shadow-lg word text-center mx-2">{word}</div>
             {isPlaying ? (
               <div className="d-flex justify-content-around show_move_up">
                 <MyBtn
@@ -135,7 +151,7 @@
             ) : (
               <MyBtn
                 text="開始"
-                btnClass="start"
+                btnClass="start w-100"
                 doClick={() => {
                   randomWord();
                   setPlaying(true);
@@ -143,6 +159,20 @@
                 }}
               />
             )}
+          </div>
+        );
+      };
+
+      const MyInputGroup = ({ value, doChange }) => {
+        return (
+          <div className="input-group input-group-lg">
+            <span className="input-group-text">設定倒數</span>
+            <input
+              className="form-control text-center"
+              value={value}
+              onChange={doChange}
+            />
+            <span className="input-group-text">分</span>
           </div>
         );
       };
