@@ -92,28 +92,149 @@
   <body>
     <div id="app"></div>
     <script type="text/babel">
-      const { useState, useEffect } = React;
-      let words = ["冰箱", "狗", "牛奶", "酪梨", "歐洲"];
+      const { useState, useEffect, useRef } = React;
+      let words = [
+        "冰箱",
+        "狗",
+        "牛奶",
+        "酪梨",
+        "歐洲",
+        "分配",
+        "突然",
+        "積累",
+        "證實",
+        "短暫",
+        "能力",
+        "條理",
+        "強制",
+        "奉獻",
+        "證明",
+        "歧視",
+        "懷疑",
+        "誇大",
+        "異常",
+        "害怕",
+        "產生",
+        "全球",
+        "引導",
+        "有害",
+        "屈辱",
+        "憎恨",
+        "偽造",
+        "立即",
+        "阻礙",
+        "合理",
+        "保存",
+        "智力",
+        "短暫",
+        "相互",
+        "善於觀察",
+        "正常",
+        "長久",
+        "肺炎",
+        "措施",
+        "完全",
+        "調解",
+        "排練",
+        "不滿",
+        "正直",
+        "次要",
+        "明智",
+        "短缺",
+        "堅固",
+        "門檻",
+        "想像",
+        "筋疲力竭",
+        "熱忱",
+        "八月",
+        "黑色",
+        "露營",
+        "黑板",
+        "秋天",
+        "毯子",
+        "蠟燭",
+        "遠離",
+        "糖果",
+        "嬰兒",
+        "街區",
+        "背後",
+        "車子",
+        "卡片",
+        "羽毛球",
+        "關心",
+        "袋子",
+        "仔細",
+        "女演",
+        "烘烤",
+        "攜帶",
+        "害怕",
+        "麵包店",
+        "情形",
+        "陽台",
+        "城堡",
+        "貓",
+        "香蕉",
+        "無聊",
+        "趕上",
+        "樂團",
+        "慶祝",
+        "銀行",
+        "手機",
+        "烤肉",
+        "棒球",
+        "兩者",
+        "中心",
+        "籃子",
+        "公分",
+        "籃球",
+        "椅子",
+        "蝙蝠",
+        "粉筆",
+        "洗澡",
+        "機會",
+        "浴室",
+        "零錢",
+        "便宜",
+        "海灘",
+        "欺騙",
+        "檢查",
+        "歡呼",
+        "美麗",
+        "橋",
+        "乳酪",
+      ];
       let wordsLen = words.length;
+      let timer = null;
 
       const App = () => {
-        const [min, setMin] = useState(3);
+        const settingSec = useRef(3);
+        const point = useRef(0);
+        const [sec, setSec] = useState(settingSec.current);
         const [isPlaying, setPlaying] = useState(false);
         const [isGiveUp, setGiveUp] = useState(false);
         const [word, setWord] = useState("╰(*°▽°*)╯");
-        const timer = () => setInterval(() => setMin((pre) => pre - 1), 1000);
-        const stopTimer = () => clearInterval(timer);
+
+        const startTimer = () =>
+          (timer = setInterval(function () {
+            setSec((pre) => pre - 1);
+          }, 1000));
+
+        const reset = () => {
+          clearInterval(timer);
+          setPlaying(false);
+          setGiveUp(false);
+          setWord("╰(*°▽°*)╯");
+          setSec(settingSec.current);
+          point.current = 0;
+        };
 
         useEffect(() => {
-          if (min <= 0 && isPlaying) {
-            clearInterval(timer); //目前沒作用
-            Swal.fire("時間到啦", "", "warning");
-            setPlaying(false);
-            setGiveUp(false);
-            setWord("╰(*°▽°*)╯");
-            setMin(3);
+          if (!isPlaying) settingSec.current = sec;
+          else if (sec <= 0) {
+            Swal.fire("時間到啦", `共得 ${point.current} 分`, "warning");
+            reset();
           }
-        }, [min]);
+        }, [sec]);
 
         const randomWord = () => {
           const randomNum = Math.floor(wordsLen * Math.random());
@@ -126,17 +247,18 @@
           <div class="container show_move_up d-flex flex-column justify-content-between">
             <div className="timer mt-3">
               {isPlaying ? (
-                <div className="border ">{min}</div>
+                <div className="border">{sec}</div>
               ) : (
                 <MyInputGroup
-                  value={min}
-                  doChange={(e) => setMin(e.target.value)}
+                  value={sec}
+                  doChange={(e) => setSec(e.target.value)}
                 />
               )}
             </div>
             <div className="border shadow-lg word text-center text-wrap">
               {word}
             </div>
+            <h2 className="text-center">分數：{point.current}</h2>
             {isPlaying ? (
               <div className="d-flex justify-content-between show_move_up">
                 <MyBtn
@@ -148,7 +270,14 @@
                   }}
                   isDisabled={isGiveUp}
                 />
-                <MyBtn text="下張" btnClass="next w-100" doClick={randomWord} />
+                <MyBtn
+                  text="下張"
+                  btnClass="next w-100"
+                  doClick={() => {
+                    randomWord();
+                    point.current++;
+                  }}
+                />
               </div>
             ) : (
               <MyBtn
@@ -157,7 +286,7 @@
                 doClick={() => {
                   randomWord();
                   setPlaying(true);
-                  timer();
+                  startTimer();
                 }}
               />
             )}
@@ -174,7 +303,7 @@
               value={value}
               onChange={doChange}
             />
-            <span className="input-group-text">分</span>
+            <span className="input-group-text">秒鐘</span>
           </div>
         );
       };
