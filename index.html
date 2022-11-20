@@ -41,14 +41,14 @@
       }
 
       .word {
-        font-size: 450%;
+        font-size: 200%;
         line-height: 4.5;
       }
 
       .start,
       .give-up,
       .next {
-        font-size: 450%;
+        font-size: 200%;
         line-height: 2.5;
       }
 
@@ -134,19 +134,19 @@
                 />
               )}
             </div>
-            <div className="border shadow-lg word text-center mx-2">{word}</div>
+            <div className="border shadow-lg word text-center">{word}</div>
             {isPlaying ? (
-              <div className="d-flex justify-content-around show_move_up">
+              <div className="d-flex justify-content-between show_move_up">
                 <MyBtn
                   text="棄牌"
-                  btnClass="give-up btn-danger"
+                  btnClass="give-up btn-danger w-100"
                   doClick={() => {
                     randomWord();
                     setGiveUp(true);
                   }}
                   isDisabled={isGiveUp}
                 />
-                <MyBtn text="下張" btnClass="next" doClick={randomWord} />
+                <MyBtn text="下張" btnClass="next w-100" doClick={randomWord} />
               </div>
             ) : (
               <MyBtn
@@ -155,7 +155,7 @@
                 doClick={() => {
                   randomWord();
                   setPlaying(true);
-                  timer();
+                  // timer();
                 }}
               />
             )}
@@ -168,7 +168,7 @@
           <div className="input-group input-group-lg">
             <span className="input-group-text">設定倒數</span>
             <input
-              className="form-control text-center"
+              className="form-control text-center text-wrap"
               value={value}
               onChange={doChange}
             />
