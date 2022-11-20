@@ -207,7 +207,7 @@
       let timer = null;
 
       const App = () => {
-        const settingSec = useRef(3);
+        const settingSec = useRef(10);
         const point = useRef(0);
         const [sec, setSec] = useState(settingSec.current);
         const [isPlaying, setPlaying] = useState(false);
@@ -247,7 +247,16 @@
           <div class="container show_move_up d-flex flex-column justify-content-between">
             <div className="timer mt-3">
               {isPlaying ? (
-                <div className="border">{sec}</div>
+                <div
+                  className="border bg-primary text-light h-100"
+                  style={{
+                    width: sec.toString() + "%",
+                    height: "100%",
+                    borderRadius: "10px",
+                  }}
+                >
+                  {sec}
+                </div>
               ) : (
                 <MyInputGroup
                   value={sec}
@@ -266,7 +275,7 @@
                   btnClass="give-up btn-danger w-100"
                   doClick={() => {
                     randomWord();
-                    setGiveUp(true);
+                    // setGiveUp(true);
                   }}
                   isDisabled={isGiveUp}
                 />
