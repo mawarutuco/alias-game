@@ -33,11 +33,34 @@
 
     <style>
       .timer {
-        /* height: 250px; */
+        font-size: 150%;
       }
+
+      .word {
+        font-size: 450%;
+        line-height: 2.5;
+      }
+
+      .start,
       .give-up,
       .next {
         font-size: 450%;
+      }
+
+      .show_move_up {
+        animation: move_up 0.8s;
+      }
+
+      @keyframes move_up {
+        from {
+          transform: translateY(50px);
+          opacity: 0;
+        }
+
+        to {
+          transform: translateY(0px);
+          opacity: 1;
+        }
       }
     </style>
   </head>
@@ -45,18 +68,47 @@
     <div id="app"></div>
     <script type="text/babel">
       const { useState, useEffect } = React;
-      const words = [];
+      let words = ["冰箱", "狗", "牛奶", "酪梨"];
+      let wordsLen = words.length;
 
       const App = () => {
-        const [word, setWord] = useState("word");
+        const [isPlaying, setPlaying] = useState("false");
+        const [giveUp, setGiveUp] = useState("false");
+        const [word, setWord] = useState("╰(*°▽°*)╯");
+        const randomWord = () => {
+          const randomNum = Math.floor(wordsLen * Math.random());
+          console.log(words);
+          setWord(words[randomNum]);
+          wordsLen--;
+          words.splice(randomNum, 1);
+        };
         return (
           <div class="container d-flex flex-column">
             <div className="border timer">TIMER</div>
-            <div className="border word">{word}</div>
-            <div className="d-flex justify-content-around">
-              <MyBtn text="棄牌" btnClass="give-up btn-danger" />
-              <MyBtn text="下張" btnClass="next" />
-            </div>
+            <div className="border word text-center">{word}</div>
+
+            {isPlaying ? (
+              <MyBtn
+                text="開始"
+                btnClass="start"
+                doClick={() => {
+                  randomWord();
+                  setPlaying((pre) => !pre);
+                }}
+              />
+            ) : (
+              <div className="d-flex justify-content-around show_move_up">
+                <MyBtn
+                  text="棄牌"
+                  btnClass="give-up btn-danger"
+                  doClick={() => {
+                    randomWord();
+                    setGiveUp((pre) => !pre);
+                  }}
+                />
+                <MyBtn text="下張" btnClass="next" doClick={randomWord} />
+              </div>
+            )}
           </div>
         );
       };
