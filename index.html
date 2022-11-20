@@ -42,14 +42,14 @@
 
       .word {
         font-size: 200%;
-        line-height: 4.5;
+        line-height: 8;
       }
 
       .start,
       .give-up,
       .next {
         font-size: 200%;
-        line-height: 2.5;
+        line-height: 6;
       }
 
       .show_move_up {
@@ -85,7 +85,7 @@
       }
 
       .container {
-        height: 98vh;
+        height: 90vh;
       }
     </style>
   </head>
@@ -93,7 +93,7 @@
     <div id="app"></div>
     <script type="text/babel">
       const { useState, useEffect } = React;
-      let words = ["冰箱", "狗", "牛奶", "酪梨"];
+      let words = ["冰箱", "狗", "牛奶", "酪梨", "歐洲"];
       let wordsLen = words.length;
 
       const App = () => {
@@ -111,7 +111,7 @@
             setPlaying(false);
             setGiveUp(false);
             setWord("╰(*°▽°*)╯");
-            // setMin(3);
+            setMin(3);
           }
         }, [min]);
 
@@ -134,7 +134,9 @@
                 />
               )}
             </div>
-            <div className="border shadow-lg word text-center">{word}</div>
+            <div className="border shadow-lg word text-center text-wrap">
+              {word}
+            </div>
             {isPlaying ? (
               <div className="d-flex justify-content-between show_move_up">
                 <MyBtn
@@ -155,7 +157,7 @@
                 doClick={() => {
                   randomWord();
                   setPlaying(true);
-                  // timer();
+                  timer();
                 }}
               />
             )}
