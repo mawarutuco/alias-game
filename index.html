@@ -32,22 +32,28 @@
     ></script>
 
     <style>
-        .give-up,.next{
-            font-size: 450%;
-        }
+      .timer {
+        /* height: 250px; */
+      }
+      .give-up,
+      .next {
+        font-size: 450%;
+      }
     </style>
   </head>
   <body>
     <div id="app"></div>
     <script type="text/babel">
       const { useState, useEffect } = React;
+      const words = [];
 
       const App = () => {
+        const [word, setWord] = useState("word");
         return (
           <div class="container d-flex flex-column">
-            <div className='border timer'>TIMER</div>
-            <div className='border word'>WORD</div>
-            <div className='d-flex justify-content-around'>
+            <div className="border timer">TIMER</div>
+            <div className="border word">{word}</div>
+            <div className="d-flex justify-content-around">
               <MyBtn text="棄牌" btnClass="give-up btn-danger" />
               <MyBtn text="下張" btnClass="next" />
             </div>
