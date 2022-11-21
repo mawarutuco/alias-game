@@ -206,6 +206,14 @@
       let timer = null;
 
       const App = () => {
+        const swalWithBootstrapButtons = Swal.mixin({
+          customClass: {
+            confirmButton: "btn btn-primary",
+            cancelButton: "btn btn-secondary",
+          },
+          buttonsStyling: false,
+        });
+
         const settingSec = useRef(10);
         const point = useRef(0);
         const [sec, setSec] = useState(settingSec.current);
@@ -224,13 +232,16 @@
           setGiveUp(false);
           setWord("╰(*°▽°*)╯");
           setSec(settingSec.current);
-          point.current = 0;
         };
 
         useEffect(() => {
           if (!isPlaying) settingSec.current = sec;
           else if (sec <= 0) {
-            Swal.fire("時間到啦", `共得 ${point.current} 分`, "warning");
+            swalWithBootstrapButtons.fire(
+              "時間到啦",
+              `共得 ${point.current} 分`,
+              "warning"
+            );
             reset();
           }
         }, [sec]);
@@ -261,17 +272,19 @@
                     text="暫停"
                     doClick={() => {
                       clearInterval(timer);
-                      Swal.fire({
-                        title: "暫停中",
-                        text: `目前得 ${point.current} 分`,
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonText: "提早結束",
-                        cancelButtonText: "繼續遊戲",
-                      }).then((result) => {
-                        if (result.isConfirmed) reset();
-                        else startTimer();
-                      });
+                      swalWithBootstrapButtons
+                        .fire({
+                          title: "暫停中",
+                          text: `目前得 ${point.current} 分`,
+                          icon: "warning",
+                          showCancelButton: true,
+                          confirmButtonText: "繼續遊戲",
+                          cancelButtonText: "提早結束",
+                        })
+                        .then((result) => {
+                          if (result.isConfirmed) startTimer();
+                          else reset();
+                        });
                     }}
                   />
                 </div>
@@ -314,6 +327,7 @@
                   randomWord();
                   setPlaying(true);
                   startTimer();
+                  point.current = 0;
                 }}
               />
             )}
