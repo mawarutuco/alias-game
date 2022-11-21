@@ -37,7 +37,6 @@
     <style>
       .timer {
         font-size: 150%;
-        height: 50px;
       }
 
       .word {
@@ -247,15 +246,17 @@
           <div class="container show_move_up d-flex flex-column justify-content-between">
             <div className="timer mt-3">
               {isPlaying ? (
-                <div
-                  className="border bg-primary text-light h-100"
-                  style={{
-                    width: (sec/settingSec*100).toString() + "%",
-                    height: "100%",
-                    borderRadius: "10px",
-                  }}
-                >
-                  {sec}
+                <div className="d-flex justify-content-between">
+                  <div
+                    className="bg-primary text-light ps-1"
+                    style={{
+                      width: ((sec / settingSec.current) * 80).toString() + "%",
+                      borderRadius: "10px",
+                    }}
+                  >
+                    {sec}
+                  </div>
+
                 </div>
               ) : (
                 <MyInputGroup
