@@ -234,6 +234,49 @@
           setSec(settingSec.current);
         };
 
+        const randomWord = () => {
+          const randomNum = Math.floor(wordsLen * Math.random());
+          setWord(words[randomNum]);
+          wordsLen--;
+          words.splice(randomNum, 1);
+        };
+
+        const stopGame = () => {
+          clearInterval(timer);
+          swalWithBootstrapButtons
+            .fire({
+              title: "暫停中",
+              text: `目前得 ${point.current} 分`,
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonText: "繼續遊戲",
+              cancelButtonText: "提早結束",
+            })
+            .then((result) => {
+              if (result.isConfirmed) startTimer();
+              else reset();
+            });
+        };
+
+        const nextCard = () => {
+          randomWord();
+          point.current++;
+        };
+
+        const giveUpCard = () => {
+          randomWord();
+          // isGiveUp()
+        };
+
+        const startGame = () => {
+          randomWord();
+          setPlaying(true);
+          startTimer();
+          point.current = 0;
+        };
+
+        const timePercent = ((sec / settingSec.current) * 80).toString();
+
         useEffect(() => {
           if (!isPlaying) settingSec.current = sec;
           else if (sec <= 0) {
@@ -246,13 +289,6 @@
           }
         }, [sec]);
 
-        const randomWord = () => {
-          const randomNum = Math.floor(wordsLen * Math.random());
-          setWord(words[randomNum]);
-          wordsLen--;
-          words.splice(randomNum, 1);
-        };
-
         return (
           <div class="container show_move_up d-flex flex-column justify-content-between">
             <div className="timer mt-3">
@@ -261,7 +297,7 @@
                   <div
                     className="bg-primary text-light ps-1"
                     style={{
-                      width: ((sec / settingSec.current) * 80).toString() + "%",
+                      width: timePercent + "%",
                       borderRadius: "10px",
                     }}
                   >
@@ -270,22 +306,7 @@
                   <MyBtn
                     btnClass="btn btn-secondary"
                     text="暫停"
-                    doClick={() => {
-                      clearInterval(timer);
-                      swalWithBootstrapButtons
-                        .fire({
-                          title: "暫停中",
-                          text: `目前得 ${point.current} 分`,
-                          icon: "warning",
-                          showCancelButton: true,
-                          confirmButtonText: "繼續遊戲",
-                          cancelButtonText: "提早結束",
-                        })
-                        .then((result) => {
-                          if (result.isConfirmed) startTimer();
-                          else reset();
-                        });
-                    }}
+                    doClick={stopGame}
                   />
                 </div>
               ) : (
@@ -304,32 +325,13 @@
                 <MyBtn
                   text="棄牌"
                   btnClass="give-up btn-danger w-100"
-                  doClick={() => {
-                    randomWord();
-                    // setGiveUp(true);
-                  }}
+                  doClick={giveUpCard}
                   isDisabled={isGiveUp}
                 />
-                <MyBtn
-                  text="下張"
-                  btnClass="next w-100"
-                  doClick={() => {
-                    randomWord();
-                    point.current++;
-                  }}
-                />
+                <MyBtn text="下張" btnClass="next w-100" doClick={nextCard} />
               </div>
             ) : (
-              <MyBtn
-                text="開始"
-                btnClass="start w-100"
-                doClick={() => {
-                  randomWord();
-                  setPlaying(true);
-                  startTimer();
-                  point.current = 0;
-                }}
-              />
+              <MyBtn text="開始" btnClass="start w-100" doClick={startGame} />
             )}
           </div>
         );
