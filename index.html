@@ -256,7 +256,24 @@
                   >
                     {sec}
                   </div>
-
+                  <MyBtn
+                    btnClass="btn btn-secondary"
+                    text="暫停"
+                    doClick={() => {
+                      clearInterval(timer);
+                      Swal.fire({
+                        title: "暫停中",
+                        text: `目前得 ${point.current} 分`,
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "提早結束",
+                        cancelButtonText: "繼續遊戲",
+                      }).then((result) => {
+                        if (result.isConfirmed) reset();
+                        else startTimer();
+                      });
+                    }}
+                  />
                 </div>
               ) : (
                 <MyInputGroup
