@@ -68,7 +68,7 @@
       }
 
       .container {
-        height: 90vh;
+        height: 98vh;
       }
     </style>
   </head>
@@ -543,15 +543,15 @@
       let wordsLen = words.length;
       let timer = null;
 
-      const App = () => {
-        const swalWithBootstrapButtons = Swal.mixin({
-          customClass: {
-            confirmButton: "btn btn-primary",
-            cancelButton: "btn btn-secondary",
-          },
-          buttonsStyling: false,
-        });
+      const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: "btn btn-primary",
+          cancelButton: "btn btn-secondary",
+        },
+        buttonsStyling: false,
+      });
 
+      const App = () => {
         const settingSec = useRef(10);
         const point = useRef(0);
         const [sec, setSec] = useState(settingSec.current);
@@ -572,28 +572,64 @@
           setSec(settingSec.current);
         };
 
+        const timePercent = ((sec / settingSec.current) * 80).toString();
+
+        useEffect(() => {
+          if (!isPlaying) settingSec.current = sec;
+          else if (sec <= 0) {
+            swalWithBootstrapButtons.fire(
+              "時間到啦",
+              `共得 ${point.current} 分`,
+              "warning"
+            );
+            reset();
+          }
+        }, [sec]);
+
+        return (
+          <div class="container show_move_up d-flex flex-column justify-content-between">
+            <Timer
+              startTimer={startTimer}
+              reset={reset}
+              point={point}
+              isPlaying={isPlaying}
+              timePercent={timePercent}
+              sec={sec}
+              setSec={setSec}
+            />
+            <div className="border shadow word text-center text-wrap">
+              {word}
+            </div>
+            <h2 className="text-center">分數：{point.current}</h2>
+            <Buttons
+              words={words}
+              setPlaying={setPlaying}
+              isPlaying={isPlaying}
+              isGiveUp={isGiveUp}
+              setGiveUp={setGiveUp}
+              setWord={setWord}
+              startTimer={startTimer}
+              point={point}
+            />
+          </div>
+        );
+      };
+
+      const Buttons = ({
+        words,
+        setWord,
+        startTimer,
+        isPlaying,
+        setPlaying,
+        isGiveUp,
+        setGiveUp,
+        point,
+      }) => {
         const randomWord = () => {
           const randomNum = Math.floor(wordsLen * Math.random());
           setWord(words[randomNum]);
           wordsLen--;
           words.splice(randomNum, 1);
-        };
-
-        const stopGame = () => {
-          clearInterval(timer);
-          swalWithBootstrapButtons
-            .fire({
-              title: "暫停中",
-              text: `目前得 ${point.current} 分`,
-              icon: "warning",
-              showCancelButton: true,
-              confirmButtonText: "繼續遊戲",
-              cancelButtonText: "提早結束",
-            })
-            .then((result) => {
-              if (result.isConfirmed) startTimer();
-              else reset();
-            });
         };
 
         const nextCard = () => {
@@ -612,52 +648,8 @@
           startTimer();
           point.current = 0;
         };
-
-        const timePercent = ((sec / settingSec.current) * 80).toString();
-
-        useEffect(() => {
-          if (!isPlaying) settingSec.current = sec;
-          else if (sec <= 0) {
-            swalWithBootstrapButtons.fire(
-              "時間到啦",
-              `共得 ${point.current} 分`,
-              "warning"
-            );
-            reset();
-          }
-        }, [sec]);
-
         return (
-          <div class="container show_move_up d-flex flex-column justify-content-between">
-            <div className="timer mt-3">
-              {isPlaying ? (
-                <div className="d-flex justify-content-between">
-                  <div
-                    className="bg-primary text-light ps-1"
-                    style={{
-                      width: timePercent + "%",
-                      borderRadius: "10px",
-                    }}
-                  >
-                    {sec}
-                  </div>
-                  <MyBtn
-                    btnClass="btn btn-secondary"
-                    text="暫停"
-                    doClick={stopGame}
-                  />
-                </div>
-              ) : (
-                <MyInputGroup
-                  value={sec}
-                  doChange={(e) => setSec(e.target.value)}
-                />
-              )}
-            </div>
-            <div className="border shadow word text-center text-wrap">
-              {word}
-            </div>
-            <h2 className="text-center">分數：{point.current}</h2>
+          <div>
             {isPlaying ? (
               <div className="d-flex justify-content-between show_move_up">
                 <MyBtn
@@ -670,6 +662,61 @@
               </div>
             ) : (
               <MyBtn text="開始" btnClass="start w-100" doClick={startGame} />
+            )}
+          </div>
+        );
+      };
+
+      const Timer = ({
+        reset,
+        startTimer,
+        point,
+        isPlaying,
+        timePercent,
+        sec,
+        setSec,
+      }) => {
+        const stopGame = () => {
+          clearInterval(timer);
+          swalWithBootstrapButtons
+            .fire({
+              title: "暫停中",
+              text: `目前得 ${point.current} 分`,
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonText: "繼續遊戲",
+              cancelButtonText: "提早結束",
+            })
+            .then((result) => {
+              if (result.isConfirmed) startTimer();
+              else reset();
+            });
+        };
+
+        return (
+          <div className="timer mt-3">
+            {isPlaying ? (
+              <div className="d-flex justify-content-between">
+                <div
+                  className="bg-primary text-light ps-1"
+                  style={{
+                    width: timePercent + "%",
+                    borderRadius: "10px",
+                  }}
+                >
+                  {sec}
+                </div>
+                <MyBtn
+                  btnClass="btn btn-secondary"
+                  text="暫停"
+                  doClick={stopGame}
+                />
+              </div>
+            ) : (
+              <MyInputGroup
+                value={sec}
+                doChange={(e) => setSec(e.target.value)}
+              />
             )}
           </div>
         );
