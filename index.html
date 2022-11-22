@@ -569,6 +569,7 @@
       const App = () => {
         const settingSec = useRef(10);
         const point = useRef(0);
+        const pointWords = useRef([]);
         const [sec, setSec] = useState(settingSec.current);
         const [isPlaying, setPlaying] = useState(false);
         const [isGiveUp, setGiveUp] = useState(false);
@@ -615,8 +616,19 @@
             <div className="border shadow word text-center text-wrap">
               {word}
             </div>
-            <h2 className="text-center">分數：{point.current}</h2>
+            <MyBtn
+              text={`分數：${point.current}`}
+              btnClass="btn-light btn-lg"
+              doClick={() => {
+                swalWithBootstrapButtons.fire(
+                  `${pointWords.current.join("\n")}`
+                );
+              }}
+              isDisabled={isPlaying}
+            />
+
             <Buttons
+              word={word}
               words={words}
               setPlaying={setPlaying}
               isPlaying={isPlaying}
@@ -625,12 +637,14 @@
               setWord={setWord}
               startTimer={startTimer}
               point={point}
+              pointWords={pointWords}
             />
           </div>
         );
       };
 
       const Buttons = ({
+        word,
         words,
         setWord,
         startTimer,
@@ -639,6 +653,7 @@
         isGiveUp,
         setGiveUp,
         point,
+        pointWords,
       }) => {
         const randomWord = () => {
           const randomNum = Math.floor(wordsLen * Math.random());
@@ -648,6 +663,7 @@
         };
 
         const nextCard = () => {
+          pointWords.current.push(word);
           randomWord();
           point.current++;
         };
@@ -662,7 +678,9 @@
           setPlaying(true);
           startTimer();
           point.current = 0;
+          pointWords.current = [];
         };
+
         return (
           <div>
             {isPlaying ? (
