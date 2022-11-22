@@ -51,6 +51,21 @@
         line-height: 6;
       }
 
+      .click_btn:active {
+        animation: btn_move 0.3s;
+      }
+
+      @keyframes btn_move {
+        0% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(10px);
+        }
+        100% {
+          transform: translateY(0px);
+        }
+      }
       .show_move_up {
         animation: move_up 0.8s;
       }
@@ -740,7 +755,7 @@
         return (
           <button
             disabled={isDisabled}
-            className={"btn btn-primary " + btnClass}
+            className={"btn btn-primary click_btn " + btnClass}
             onClick={doClick}
           >
             {text}
